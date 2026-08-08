@@ -8,6 +8,11 @@ const pool = new Pool({
     user: env.DB_USER,
     password: env.DB_PASSWORD,
     database: env.DB_NAME,
+    connectionTimeoutMillis: 5000,
+});
+
+pool.on("error", (error) => {
+    logger.error(error, "Unexpected PostgreSQL pool error.");
 });
 
 export const connectDB = async () => {
