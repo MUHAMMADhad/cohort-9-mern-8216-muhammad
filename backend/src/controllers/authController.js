@@ -27,6 +27,16 @@ export const register = async (req, res) => {
       });
     }
 
+    // bcrypt has a 72-byte UTF-8 limit, so passwords longer than that should be rejected both during registration and login.
+    const passwordBytes = Buffer.byteLength(password, "utf8");
+
+    if (passwordBytes > 72) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must not exceed 72 bytes",
+      });
+    }
+
     // Password hashing
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -74,6 +84,15 @@ export const login = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Invalid email or password",
+      });
+    }
+
+    const passwordBytes = Buffer.byteLength(password, "utf8");
+
+    if (passwordBytes > 72) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must not exceed 72 bytes",
       });
     }
 
