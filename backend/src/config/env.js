@@ -15,6 +15,8 @@ const requiredEnv = (name) => {
 const env = {
     PORT: process.env.PORT || 5000,
     NODE_ENV: process.env.NODE_ENV || "development",
+    FRONTEND_ORIGIN: process.env.FRONTEND_ORIGIN || "http://localhost:5173",
+    COOKIE_SAME_SITE: process.env.COOKIE_SAME_SITE || "lax",
 
     DB_HOST: process.env.DB_HOST,
     DB_PORT: Number(process.env.DB_PORT),

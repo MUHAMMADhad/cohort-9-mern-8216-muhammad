@@ -1,7 +1,32 @@
 import bcrypt from "bcrypt";
 import { createUser, findUserByEmail } from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import env from "../config/env.js";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: env.NODE_ENV === "production" || env.COOKIE_SAME_SITE === "none",
+  sameSite: env.COOKIE_SAME_SITE,
+  maxAge: 24 * 60 * 60 * 1000,
+};
+
+export const csrfProtection = (req, res, next) => {
+  if (req.get("origin") !== env.FRONTEND_ORIGIN) {
+    return res.status(403).json({ success: false, message: "Invalid origin" });
+  }
+
+  const csrfCookie = req.cookies.csrf_token;
+  const csrfHeader = req.get("X-CSRF-Token");
+  if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+    return res.status(403).json({
+      success: false,
+      message: "CSRF token is required",
+    });
+  }
+
+  return next();
+};
 
 // Registration LOGIC
 export const register = async (req, res) => {
@@ -113,11 +138,12 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-      maxAge: 24 * 60 * 60 * 1000,
+    res.cookie("token", token, cookieOptions);
+    res.cookie("csrf_token", crypto.randomBytes(32).toString("hex"), {
+      httpOnly: false,
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+      maxAge: cookieOptions.maxAge,
     });
 
     return res.status(200).json({
@@ -137,10 +163,10 @@ export const login = async (req, res) => {
 
 // ADD IT HERE AT THE BOTTOM
 export const logout = (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+  res.clearCookie("token", cookieOptions);
+  res.clearCookie("csrf_token", {
+    secure: cookieOptions.secure,
+    sameSite: cookieOptions.sameSite,
   });
 
   return res.status(200).json({
