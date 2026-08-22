@@ -5,52 +5,30 @@ import { loginUser, registerUser, logoutUser } from "../services/authService";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("user");
-    try {
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      localStorage.removeItem("user");
-      return null;
-    }
+    return storedUser ? JSON.parse(storedUser) : null;
   });
-  const [authError, setAuthError] = useState(null);
-
-  const normalizeAuthError = (error, fallbackMessage) =>
-    error instanceof Error
-      ? error
-      : new Error(fallbackMessage, { cause: error });
 
   const handleLogin = async (credentials) => {
-    try {
-      const res = await loginUser(credentials);
-      setUser(res.data.user);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      setAuthError(null);
-    } catch (error) {
-      const normalizedError = normalizeAuthError(error, "Login failed");
-      setAuthError(normalizedError.message);
-      throw normalizedError;
+    const res = await loginUser(credentials);
+
+    // Extract user directly from res.user (or fallback to res.data.user)
+    const userData = res.user || res.data?.user;
+
+    if (!userData) {
+      throw new Error("User data missing in login response");
     }
+
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const handleRegister = async (userData) => {
-    try {
-      await registerUser(userData);
-      setAuthError(null);
-    } catch (error) {
-      const normalizedError = normalizeAuthError(error, "Registration failed");
-      setAuthError(normalizedError.message);
-      throw normalizedError;
-    }
+    await registerUser(userData);
   };
 
   const handleLogout = async () => {
     try {
       await logoutUser();
-      setAuthError(null);
-    } catch (error) {
-      const normalizedError = normalizeAuthError(error, "Logout failed");
-      setAuthError(normalizedError.message);
-      throw normalizedError;
     } finally {
       setUser(null);
       localStorage.removeItem("user");
@@ -59,7 +37,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, handleLogin, handleRegister, handleLogout, authError }}
+      value={{ user, handleLogin, handleRegister, handleLogout }}
     >
       {children}
     </AuthContext.Provider>
