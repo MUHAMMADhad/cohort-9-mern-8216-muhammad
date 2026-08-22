@@ -88,27 +88,21 @@ export const login = async (req, res) => {
     }
 
     // Generate JWT
-    const token = jwt.sign(
-      {
-        userId: user.id,
-      },
-      env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      },
-    );
+    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      data: {
-        token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        },
-      },
+      user,
     });
   } catch (error) {
     console.error(error);
@@ -118,4 +112,18 @@ export const login = async (req, res) => {
       message: "Internal server error",
     });
   }
+};
+
+// ADD IT HERE AT THE BOTTOM
+export const logout = (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
 };
