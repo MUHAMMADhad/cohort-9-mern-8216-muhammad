@@ -2,6 +2,16 @@ import dotenv from "dotenv";
 
 dotenv.config()
 
+const requiredEnv = (name) => {
+    const value = process.env[name];
+
+    if (!value || !value.trim()) {
+        throw new Error(`${name} is required`);
+    }
+
+    return value;
+};
+
 const env = {
     PORT: process.env.PORT || 5000,
     NODE_ENV: process.env.NODE_ENV || "development",
@@ -12,7 +22,7 @@ const env = {
     DB_PASSWORD: process.env.DB_PASSWORD,
     DB_NAME: process.env.DB_NAME,
     
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_SECRET: requiredEnv("JWT_SECRET"),
 };
 
 export default env;

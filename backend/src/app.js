@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import pinoHttp from "pino-http"
 import authRoutes from "./routes/authRoutes.js";
@@ -14,10 +15,16 @@ const API_PREFIX = "/api/v1";
 app.use(helmet());  
 
 // Enable CORS
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+    })
+);
 
 // Parse JSON Request Body
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
     pinoHttp({
@@ -32,7 +39,7 @@ app.use(`${API_PREFIX}/auth`, authRoutes);
 app.get(`${API_PREFIX}/health`, (req, res)=>{
     res.status(200).json({
         success: true,
-        message: "Notes API is running",
+        message: "Authentication API is running",
     });
 });
 // For testing that an api is running or not! 
