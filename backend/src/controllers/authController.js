@@ -8,11 +8,14 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // If anything is missing from all three then error will show or else it is good!
-    if (!name || !email || !password) {
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
       return res.status(400).json({
         success: false,
-        message: "Name, email and password are required",
+        message: "Name, email and password must be strings",
       });
     }
 
@@ -69,11 +72,10 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string") {
       return res.status(400).json({
         success: false,
-        message: "Email and password are required",
+        message: "Email and password must be strings",
       });
     }
 
