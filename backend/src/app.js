@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 // import noteRoutes from "./routes/noteRoutes.js";
 
 import logger from "./config/logger.js";
+import env from "./config/env.js";
 
 const app = express();
 const API_PREFIX = "/api/v1";
@@ -17,7 +18,7 @@ app.use(helmet());
 // Enable CORS
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: env.FRONTEND_ORIGIN,
         credentials: true,
     })
 );
