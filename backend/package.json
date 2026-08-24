@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "npx eslint src"
+
   },
   "keywords": [],
   "author": "",
@@ -24,7 +26,9 @@
     "pino-http": "^11.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "chai": "^6.2.2",
+    "globals": "^17.11.0",
     "mocha": "^11.8.0",
     "nodemon": "^3.1.14",
     "pino-pretty": "^13.1.3",
