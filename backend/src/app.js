@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import pinoHttp from "pino-http"
 import authRoutes from "./routes/authRoutes.js";
-// import noteRoutes from "./routes/noteRoutes.js";
+import noteRoutes from "./routes/noteRoutes.js";
 
 import logger from "./config/logger.js";
 import env from "./config/env.js";
@@ -34,7 +34,7 @@ app.use(
 );
 
 app.use(`${API_PREFIX}/auth`, authRoutes);
-// app.use(`${API_PREFIX}/notes`, noteRoutes);
+app.use(`${API_PREFIX}/notes`, noteRoutes);
 
 // Health Check Route (Testing)
 app.get(`${API_PREFIX}/health`, (req, res)=>{
