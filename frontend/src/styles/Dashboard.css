@@ -52,6 +52,7 @@
 
 .notes-toolbar { max-width: 1120px; margin: 0 auto 22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
 .search-box { flex: 1; display: flex; align-items: center; gap: 10px; max-width: 560px; padding: 0 14px; border: 1px solid #dedfd8; border-radius: 8px; background: #fffefb; color: #687474; }
+.search-box:focus-within { border-color: #157a70; box-shadow: 0 0 0 4px rgba(21, 122, 112, 0.15); }
 .search-box span { font-size: 24px; line-height: 1; }
 .search-box input { width: 100%; padding: 12px 0; border: 0; background: transparent; color: #1d2a2a; outline: none; }
 .filter-box { display: flex; align-items: center; gap: 8px; color: #1d2a2a; font-size: 16px; font-weight: 600; }

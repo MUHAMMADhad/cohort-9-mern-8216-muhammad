@@ -1,7 +1,6 @@
 .editor-container {
   min-height: 100vh;
   padding: 34px clamp(20px, 7vw, 100px) 70px;
-
   background: #f6f5f0;
   color: #1d2a2a;
 }
@@ -83,13 +82,11 @@
 .note-title-input {
   font-size: 1.4rem;
   font-weight: 700;
-
   margin-bottom: 1rem;
 }
 
 .note-content-input {
   padding: 1.25rem;
-
   resize: vertical;
 
   font-family: inherit;
@@ -112,7 +109,6 @@
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-
   margin-top: 1.25rem;
 }
 
@@ -120,9 +116,7 @@
 .save-button {
   border: none;
   border-radius: 8px;
-
   padding: 0.8rem 1.3rem;
-
   font-weight: 700;
   cursor: pointer;
 }
@@ -140,11 +134,8 @@
 .editor-error {
   max-width: 900px;
   margin: 0 auto 1rem;
-
   padding: 1rem;
-
   border-radius: 12px;
-
   background: #fbe8e4;
   color: #9a3f35;
 }
@@ -153,7 +144,6 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-
   background: #f6f5f0;
   color: #687474;
 }

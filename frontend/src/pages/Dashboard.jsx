@@ -146,7 +146,7 @@ const Dashboard = () => {
         </label>
       </section>
 
-      {notes.length === 0 ? (
+      {!error && notes.length === 0 ? (
         <div className="empty-state">
           <h3>No notes yet</h3>
           <p>Create your first note to get started.</p>

@@ -19,48 +19,38 @@ const requestOptions = (body) => ({
   body: JSON.stringify(body),
 });
 
-export const registerUser = async (userData) => {
+const request = async (url, body, fallbackMessage) => {
+  let response;
   try {
-    const response = await fetch(
-      `${API_URL}/register`,
-      requestOptions(userData),
-    );
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Registration failed");
-    return data;
+    response = await fetch(url, requestOptions(body));
   } catch (error) {
-    if (error instanceof Error && error.message !== "Failed to fetch")
-      throw error;
-    throw new Error("Registration service unavailable", { cause: error });
+    throw new Error(`${fallbackMessage}: service unavailable`, { cause: error });
   }
+
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (error) {
+    if (response.ok) {
+      throw new Error(`${fallbackMessage}: invalid server response`, {
+        cause: error,
+      });
+    }
+  }
+
+  if (!response.ok) throw new Error(data.message || fallbackMessage);
+  return data;
+};
+
+export const registerUser = async (userData) => {
+  return request(`${API_URL}/register`, userData, "Registration failed");
 };
 
 export const loginUser = async (credentials) => {
-  try {
-    const response = await fetch(
-      `${API_URL}/login`,
-      requestOptions(credentials),
-    );
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Login failed");
-    return data;
-  } catch (error) {
-    if (error instanceof Error && error.message !== "Failed to fetch")
-      throw error;
-    throw new Error("Login service unavailable", { cause: error });
-  }
+  return request(`${API_URL}/login`, credentials, "Login failed");
 };
 
 // ADD THIS EXPORT
 export const logoutUser = async () => {
-  try {
-    const response = await fetch(`${API_URL}/logout`, requestOptions());
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Logout failed");
-    return data;
-  } catch (error) {
-    if (error instanceof Error && error.message !== "Failed to fetch")
-      throw error;
-    throw new Error("Logout service unavailable", { cause: error });
-  }
+  return request(`${API_URL}/logout`, undefined, "Logout failed");
 };

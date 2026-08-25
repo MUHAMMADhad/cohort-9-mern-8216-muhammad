@@ -1,10 +1,11 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext.jsx";
 import "../styles/Auth.css";
 
 export const AuthCard = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const [isLogin, setIsLogin] = useState(location.pathname !== "/signup");
   const [formData, setFormData] = useState({
     name: "",
     email: "",

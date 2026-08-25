@@ -9,87 +9,63 @@ const requestOptions = (options = {}) => ({
   },
 });
 
-// GET /notes
-export const getNotes = async () => {
-  const response = await fetch(`${API_URL}/notes`, requestOptions());
+const request = async (url, options, fallbackMessage) => {
+  let response;
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch notes");
+  try {
+    response = await fetch(url, requestOptions(options));
+  } catch (error) {
+    throw new Error(`${fallbackMessage}: service unavailable`, { cause: error });
   }
 
+  let data = {};
+  try {
+    data = await response.json();
+  } catch (error) {
+    if (response.ok) {
+      throw new Error(`${fallbackMessage}: invalid server response`, {
+        cause: error,
+      });
+    }
+  }
+
+  if (!response.ok) throw new Error(data.message || fallbackMessage);
   return data;
+};
+
+// GET /notes
+export const getNotes = async () => {
+  return request(`${API_URL}/notes`, undefined, "Failed to fetch notes");
 };
 
 // GET /notes/:id
 export const getNote = async (id) => {
-  const response = await fetch(
-    `${API_URL}/notes/${id}`,
-    requestOptions()
-  );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch note");
-  }
-
-  return data;
+  return request(`${API_URL}/notes/${id}`, undefined, "Failed to fetch note");
 };
 
 // POST /notes
 export const createNote = async (noteData) => {
-  const response = await fetch(
+  return request(
     `${API_URL}/notes`,
-    requestOptions({
-      method: "POST",
-      body: JSON.stringify(noteData),
-    })
+    { method: "POST", body: JSON.stringify(noteData) },
+    "Failed to create note",
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to create note");
-  }
-
-  return data;
 };
 
 // PUT /notes/:id
 export const updateNote = async (id, noteData) => {
-  const response = await fetch(
+  return request(
     `${API_URL}/notes/${id}`,
-    requestOptions({
-      method: "PUT",
-      body: JSON.stringify(noteData),
-    })
+    { method: "PUT", body: JSON.stringify(noteData) },
+    "Failed to update note",
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to update note");
-  }
-
-  return data;
 };
 
 // DELETE /notes/:id
 export const deleteNote = async (id) => {
-  const response = await fetch(
+  return request(
     `${API_URL}/notes/${id}`,
-    requestOptions({
-      method: "DELETE",
-    })
+    { method: "DELETE" },
+    "Failed to delete note",
   );
-
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to delete note");
-  }
-
-  return data;
 };
