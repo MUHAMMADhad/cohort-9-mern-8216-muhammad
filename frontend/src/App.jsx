@@ -1,35 +1,32 @@
-import { useContext } from "react";
-import { AuthContext } from "./context/AuthContext.jsx";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from "./pages/Dashboard";
+import NoteEditor from "./components/NoteEditor.jsx";
 import { AuthCard } from "./components/AuthCard.jsx";
 
-export default function App() {
-  const { user, handleLogout } = useContext(AuthContext);
-
-  // Show Auth Forms if user is not authenticated
-  if (!user) {
-    return <AuthCard />;
-  }
-
-  // Main App Dashboard placeholder when logged in
+function App() {
   return (
-    <div style={{ padding: "3rem", textAlign: "center", color: "#f8fafc" }}>
-      <h1>Welcome, {user.name}! 👋</h1>
-      <p style={{ color: "#94a3b8" }}>You are authenticated with JWT.</p>
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: "1.5rem",
-          padding: "0.75rem 1.5rem",
-          backgroundColor: "#ef4444",
-          color: "white",
-          border: "none",
-          borderRadius: "8px",
-          cursor: "pointer",
-          fontWeight: "600",
-        }}
-      >
-        Log Out
-      </button>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/login" element={<AuthCard />} />
+        <Route path="/signup" element={<AuthCard />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/notes" element={<Dashboard />} />
+          <Route path="/notes/new" element={<NoteEditor />} />
+          <Route path="/notes/:id/edit" element={<NoteEditor />} />
+        </Route>
+
+        {/* Default Route */}
+        <Route path="/" element={<Navigate to="/notes" replace />} />
+
+        {/* Unknown Route */}
+        <Route path="*" element={<Navigate to="/notes" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+export default App;
