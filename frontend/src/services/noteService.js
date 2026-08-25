@@ -1,10 +1,19 @@
 const API_URL = `${import.meta.env.VITE_API_URL}/api/v1`;
 
+const getCsrfToken = () =>
+  document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith("csrf_token="))
+    ?.split("=")[1];
+
 const requestOptions = (options = {}) => ({
   ...options,
   credentials: "include",
   headers: {
     "Content-Type": "application/json",
+    ...(options.method && ["POST", "PUT", "DELETE"].includes(options.method)
+      ? { "X-CSRF-Token": getCsrfToken() }
+      : {}),
     ...(options.headers || {}),
   },
 });

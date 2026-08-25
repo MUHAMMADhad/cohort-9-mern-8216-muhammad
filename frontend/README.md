@@ -3,5 +3,5 @@
 3. Configure VITE_API_URL
 4. Run npm run dev
 
-Auth API: 
-VITE_API_URL=http://localhost:5000/api/v1/auth
+Auth API:
+VITE_API_URL=http://localhost:5000
