@@ -1,4 +1,4 @@
-const API_URL = `${import.meta.env.VITE_API_URL}/api/v1`;
+import { API_BASE_URL } from "../config/api.js";
 
 const getCsrfToken = () =>
   document.cookie
@@ -24,7 +24,9 @@ const request = async (url, options, fallbackMessage) => {
   try {
     response = await fetch(url, requestOptions(options));
   } catch (error) {
-    throw new Error(`${fallbackMessage}: service unavailable`, { cause: error });
+    throw new Error(`${fallbackMessage}: service unavailable`, {
+      cause: error,
+    });
   }
 
   let data = {};
@@ -44,18 +46,22 @@ const request = async (url, options, fallbackMessage) => {
 
 // GET /notes
 export const getNotes = async () => {
-  return request(`${API_URL}/notes`, undefined, "Failed to fetch notes");
+  return request(`${API_BASE_URL}/notes`, undefined, "Failed to fetch notes");
 };
 
 // GET /notes/:id
 export const getNote = async (id) => {
-  return request(`${API_URL}/notes/${id}`, undefined, "Failed to fetch note");
+  return request(
+    `${API_BASE_URL}/notes/${id}`,
+    undefined,
+    "Failed to fetch note",
+  );
 };
 
 // POST /notes
 export const createNote = async (noteData) => {
   return request(
-    `${API_URL}/notes`,
+    `${API_BASE_URL}/notes`,
     { method: "POST", body: JSON.stringify(noteData) },
     "Failed to create note",
   );
@@ -64,7 +70,7 @@ export const createNote = async (noteData) => {
 // PUT /notes/:id
 export const updateNote = async (id, noteData) => {
   return request(
-    `${API_URL}/notes/${id}`,
+    `${API_BASE_URL}/notes/${id}`,
     { method: "PUT", body: JSON.stringify(noteData) },
     "Failed to update note",
   );
@@ -73,7 +79,7 @@ export const updateNote = async (id, noteData) => {
 // DELETE /notes/:id
 export const deleteNote = async (id) => {
   return request(
-    `${API_URL}/notes/${id}`,
+    `${API_BASE_URL}/notes/${id}`,
     { method: "DELETE" },
     "Failed to delete note",
   );

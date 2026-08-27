@@ -1,7 +1,7 @@
 // Auth service talks to the backend.
 // The auth service contains functions that make API calls to your Express backend.
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/v1/auth`;
+import { API_BASE_URL } from "../config/api.js";
 
 const getCsrfToken = () =>
   document.cookie
@@ -24,7 +24,9 @@ const request = async (url, body, fallbackMessage) => {
   try {
     response = await fetch(url, requestOptions(body));
   } catch (error) {
-    throw new Error(`${fallbackMessage}: service unavailable`, { cause: error });
+    throw new Error(`${fallbackMessage}: service unavailable`, {
+      cause: error,
+    });
   }
 
   let data = {};
@@ -43,14 +45,18 @@ const request = async (url, body, fallbackMessage) => {
 };
 
 export const registerUser = async (userData) => {
-  return request(`${API_URL}/register`, userData, "Registration failed");
+  return request(
+    `${API_BASE_URL}/auth/register`,
+    userData,
+    "Registration failed",
+  );
 };
 
 export const loginUser = async (credentials) => {
-  return request(`${API_URL}/login`, credentials, "Login failed");
+  return request(`${API_BASE_URL}/auth/login`, credentials, "Login failed");
 };
 
 // ADD THIS EXPORT
 export const logoutUser = async () => {
-  return request(`${API_URL}/logout`, undefined, "Logout failed");
+  return request(`${API_BASE_URL}/auth/logout`, undefined, "Logout failed");
 };
