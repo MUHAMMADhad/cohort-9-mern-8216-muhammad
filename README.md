@@ -49,9 +49,9 @@ A full-stack notes application built with the PERN stack:
 
 ## Database Setup
 
-Create a PostgreSQL database, then run the following SQL. The application does
-not include a migration tool, so these tables must exist before registration
-or note operations are used.
+Create a PostgreSQL database, then run [backend/db/schema.sql](backend/db/schema.sql).
+The application does not run migrations automatically, so these tables must
+exist before registration or note operations are used.
 
 ```sql
 CREATE TABLE users (
@@ -73,6 +73,12 @@ CREATE TABLE notes (
 );
 
 CREATE INDEX notes_user_id_idx ON notes(user_id);
+```
+
+For a local database, the schema can be applied with:
+
+```powershell
+psql -h localhost -U postgres -d notes_app -f backend/db/schema.sql
 ```
 
 ## Environment Configuration

@@ -48,6 +48,12 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Initialize test database
+        working-directory: backend
+        env:
+          PGPASSWORD: postgres
+        run: psql -h localhost -U postgres -d notes_test -f db/schema.sql
+
       - name: Run backend tests with coverage
         working-directory: backend
         env:
