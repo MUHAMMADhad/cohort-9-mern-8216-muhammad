@@ -2,7 +2,7 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches: [main, feature-testing]
+    branches: [main, develop, feature-testing]
   pull_request:
     types: [opened, synchronize, reopened]
 
