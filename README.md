@@ -230,3 +230,9 @@ Create a SonarQube project with the key from `sonar-project.properties` and use
 the JavaScript/TypeScript `Sonar way` quality profile. The configuration
 excludes dependencies, generated assets, and coverage output while retaining
 standard JavaScript rules for application code.
+
+Backend:
+![alt text](image.png)
+
+Frontend:
+![alt text](image-1.png)
