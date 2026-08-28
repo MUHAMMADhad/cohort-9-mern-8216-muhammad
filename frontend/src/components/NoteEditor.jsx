@@ -108,7 +108,10 @@ const NoteEditor = () => {
     try {
       setSaving(true);
       setError("");
-      const noteData = { title: title.trim(), content: content.trim() };
+      const noteData = {
+        title: title.trim(),
+        content: JSON.stringify(editor.document),
+      };
 
       // 1. Capture the network resolution promise completely
       let serverResponse;
