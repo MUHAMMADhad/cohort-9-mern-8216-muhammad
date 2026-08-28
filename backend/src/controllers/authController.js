@@ -4,6 +4,9 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import env from "../config/env.js";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MIN_PASSWORD_LENGTH = 8;
+
 const cookieOptions = {
   httpOnly: true,
   secure: env.NODE_ENV === "production" || env.COOKIE_SAME_SITE === "none",
@@ -41,6 +44,20 @@ export const register = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Name, email and password must be strings",
+      });
+    }
+
+    if (!EMAIL_PATTERN.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
+      });
+    }
+
+    if ([...password].length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
       });
     }
 
@@ -101,6 +118,20 @@ export const login = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Email and password must be strings",
+      });
+    }
+
+    if (!EMAIL_PATTERN.test(email)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid email address",
+      });
+    }
+
+    if ([...password].length < MIN_PASSWORD_LENGTH) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
       });
     }
 

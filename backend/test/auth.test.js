@@ -49,6 +49,34 @@ describe("Registration API testing", function () {
       );
     });
 
+    it("should reject an invalid email address", async function () {
+      const response = await request(app).post("/api/v1/auth/register").send({
+        name: "Test User",
+        email: "invalid-email",
+        password: "Password123!",
+      });
+
+      expect(response.status).to.equal(400);
+      expect(response.body.message).to.equal(
+        "Please enter a valid email address",
+      );
+    });
+
+    it("should reject a password shorter than 8 characters", async function () {
+      const response = await request(app)
+        .post("/api/v1/auth/register")
+        .send({
+          name: "Test User",
+          email: `short-${Date.now()}@example.com`,
+          password: "short",
+        });
+
+      expect(response.status).to.equal(400);
+      expect(response.body.message).to.equal(
+        "Password must be at least 8 characters",
+      );
+    });
+
     // Rejects when password exceeding 72 bytes
     it("should reject a password exceeding 72 bytes", async function () {
       const response = await request(app)

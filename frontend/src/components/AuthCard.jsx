@@ -49,7 +49,7 @@ export const AuthCard = () => {
         <div className="auth-header">
           <div className="auth-logo">N</div>
           <h1 className="auth-title">
-            {isLogin ? "Notes App" : "Create account"}
+            {isLogin ? "NoteNest" : "Create account"}
           </h1>
           <p>
             {isLogin
@@ -97,6 +97,9 @@ export const AuthCard = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              minLength={8}
+              maxLength={72}
+              title="Password must be 8 to 72 characters"
               required
             />
           </label>

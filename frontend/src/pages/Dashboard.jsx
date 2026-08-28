@@ -84,7 +84,7 @@ const Dashboard = () => {
     <div className="dashboard">
       <header className="dashboard-header">
         <div>
-          <span className="dashboard-label">YOUR NOTES</span>
+          <span className="dashboard-label">NOTENEST</span>
           <h1>My Notes</h1>
           <p>
             {user?.name
