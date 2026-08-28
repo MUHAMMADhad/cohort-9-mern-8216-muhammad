@@ -49,7 +49,7 @@ export const AuthCard = () => {
         <div className="auth-header">
           <div className="auth-logo">N</div>
           <h1 className="auth-title">
-            {isLogin ? "NoteNest" : "Create account"}
+            {isLogin ? "NoteAlign" : "Create account"}
           </h1>
           <p>
             {isLogin
