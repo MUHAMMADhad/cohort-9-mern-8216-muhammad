@@ -108,14 +108,23 @@ const NoteEditor = () => {
     try {
       setSaving(true);
       setError("");
-      const noteData = {
-        title: title.trim(),
-        content: JSON.stringify(editor.document),
-      };
-      if (isEditing) await updateNote(noteId, noteData);
-      else await createNote(noteData);
+      const noteData = { title: title.trim(), content: content.trim() };
+
+      // 1. Capture the network resolution promise completely
+      let serverResponse;
+      if (isEditing) {
+        serverResponse = await updateNote(noteId, noteData);
+      } else {
+        serverResponse = await createNote(noteData);
+      }
+
+      // 2. Debug verification marker
+      console.log("🚀 Database save confirmed by Express:", serverResponse);
+
+      // 3. Only redirect once the asynchronous database query loop completely finishes
       navigate("/notes", { replace: true });
     } catch (saveError) {
+      console.error("Failed to save note:", saveError);
       setError(saveError.message || "Unable to save note");
     } finally {
       setSaving(false);
