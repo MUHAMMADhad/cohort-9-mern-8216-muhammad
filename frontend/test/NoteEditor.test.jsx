@@ -10,6 +10,44 @@ import {
 const mockNavigate = jest.fn();
 const mockUseParams = jest.fn(() => ({}));
 
+// Mock BlockNote components and hooks
+const mockEditor = {
+  document: [{ type: "paragraph", content: [] }],
+  replaceBlocks: jest.fn((oldBlocks, newBlocks) => {
+    // Actually update the document when replaceBlocks is called
+    mockEditor.document = newBlocks;
+  }),
+};
+
+jest.mock("@blocknote/react", () => ({
+  useCreateBlockNote: jest.fn(() => mockEditor),
+}));
+
+jest.mock("@blocknote/mantine", () => ({
+  BlockNoteView: ({ onChange }) => {
+    // Mock component that allows testing through onChange
+    return (
+      <div data-testid="blocknote-editor" onChange={onChange}>
+        <input
+          data-testid="content-input"
+          type="text"
+          aria-label="Content"
+          onChange={(e) => {
+            // Simulate editor document update
+            mockEditor.document = [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: e.target.value, styles: {} }],
+              },
+            ];
+            onChange?.();
+          }}
+        />
+      </div>
+    );
+  },
+}));
+
 jest.mock("../src/services/noteService.js", () => ({
   createNote: jest.fn(),
   getNote: jest.fn(),
@@ -25,6 +63,11 @@ describe("NoteEditor", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseParams.mockReturnValue({});
+    mockEditor.document = [{ type: "paragraph", content: [] }];
+    // Restore replaceBlocks implementation after clearAllMocks
+    mockEditor.replaceBlocks.mockImplementation((oldBlocks, newBlocks) => {
+      mockEditor.document = newBlocks;
+    });
   });
 
   test("creates a note and navigates back to the dashboard", async () => {
@@ -33,7 +76,7 @@ describe("NoteEditor", () => {
     render(<NoteEditor />);
 
     await user.type(screen.getByLabelText("Title"), "  New idea  ");
-    await user.type(screen.getByLabelText("Content"), "A useful thought");
+    await user.type(screen.getByTestId("content-input"), "A useful thought");
     expect(screen.getByText("3 words")).toBeInTheDocument();
     expect(screen.getByText("16 characters")).toBeInTheDocument();
 
@@ -42,7 +85,12 @@ describe("NoteEditor", () => {
     await waitFor(() => {
       expect(createNote).toHaveBeenCalledWith({
         title: "New idea",
-        content: "A useful thought",
+        content: JSON.stringify([
+          {
+            type: "paragraph",
+            content: [{ type: "text", text: "A useful thought", styles: {} }],
+          },
+        ]),
       });
     });
     expect(mockNavigate).toHaveBeenCalledWith("/notes", { replace: true });
@@ -53,7 +101,7 @@ describe("NoteEditor", () => {
     render(<NoteEditor />);
 
     await user.type(screen.getByLabelText("Title"), " ");
-    await user.type(screen.getByLabelText("Content"), " ");
+    // Don't type content to simulate empty content
     await user.click(screen.getByRole("button", { name: "Save note" }));
 
     expect(screen.getByRole("alert")).toHaveTextContent(
@@ -76,8 +124,14 @@ describe("NoteEditor", () => {
   test("loads and updates an existing note", async () => {
     const user = userEvent.setup();
     mockUseParams.mockReturnValue({ id: "12" });
+    const oldContent = JSON.stringify([
+      {
+        type: "paragraph",
+        content: [{ type: "text", text: "Old content", styles: {} }],
+      },
+    ]);
     getNote.mockResolvedValueOnce({
-      note: { title: "Old title", content: "Old content" },
+      note: { title: "Old title", content: oldContent },
     });
     updateNote.mockResolvedValueOnce({ success: true });
     render(<NoteEditor />);
@@ -90,7 +144,12 @@ describe("NoteEditor", () => {
     await waitFor(() => {
       expect(updateNote).toHaveBeenCalledWith("12", {
         title: "Updated title",
-        content: "Old content",
+        content: JSON.stringify([
+          {
+            type: "paragraph",
+            content: [{ type: "text", text: "Old content", styles: {} }],
+          },
+        ]),
       });
     });
   });
@@ -105,7 +164,7 @@ describe("NoteEditor", () => {
       "Unable to load note",
     );
     await user.type(screen.getByLabelText("Title"), "Title");
-    await user.type(screen.getByLabelText("Content"), "Content");
+    await user.type(screen.getByTestId("content-input"), "Content");
     updateNote.mockRejectedValueOnce(new Error("Save failed"));
     await user.click(screen.getByRole("button", { name: "Update note" }));
 
