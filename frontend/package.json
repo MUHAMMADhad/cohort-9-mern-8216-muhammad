@@ -11,6 +11,9 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
+    "@blocknote/core": "^0.54.0",
+    "@blocknote/mantine": "^0.54.0",
+    "@blocknote/react": "^0.54.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2"

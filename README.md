@@ -231,6 +231,10 @@ the JavaScript/TypeScript `Sonar way` quality profile. The configuration
 excludes dependencies, generated assets, and coverage output while retaining
 standard JavaScript rules for application code.
 
+## BlockNote (Rich Text Editor)
+
+Used BlockNote package which is used for rich text editing in the notes application. It provides a user-friendly interface like 'Notion' for creating and editing notes with various formatting options.
+
 Backend:
 ![alt text](image.png)
 
