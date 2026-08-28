@@ -40,7 +40,7 @@ describe("AuthCard", () => {
   test("renders login form", () => {
     renderAuthCard("/login");
 
-    expect(screen.getByText("NoteNest")).toBeInTheDocument();
+    expect(screen.getByText("NoteAlign")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("name@example.com")).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: "Sign In" })).toBeInTheDocument();

@@ -156,6 +156,9 @@ describe("NoteEditor", () => {
 
   test("shows load and save errors", async () => {
     const user = userEvent.setup();
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
     mockUseParams.mockReturnValue({ id: "12" });
     getNote.mockRejectedValueOnce(new Error("Unable to load note"));
     render(<NoteEditor />);
@@ -169,5 +172,6 @@ describe("NoteEditor", () => {
     await user.click(screen.getByRole("button", { name: "Update note" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Save failed");
+    consoleError.mockRestore();
   });
 });
