@@ -159,19 +159,22 @@ describe("NoteEditor", () => {
     const consoleError = jest
       .spyOn(console, "error")
       .mockImplementation(() => {});
-    mockUseParams.mockReturnValue({ id: "12" });
-    getNote.mockRejectedValueOnce(new Error("Unable to load note"));
-    render(<NoteEditor />);
+    try {
+      mockUseParams.mockReturnValue({ id: "12" });
+      getNote.mockRejectedValueOnce(new Error("Unable to load note"));
+      render(<NoteEditor />);
 
-    expect(await screen.findByRole("alert")).toHaveTextContent(
-      "Unable to load note",
-    );
-    await user.type(screen.getByLabelText("Title"), "Title");
-    await user.type(screen.getByTestId("content-input"), "Content");
-    updateNote.mockRejectedValueOnce(new Error("Save failed"));
-    await user.click(screen.getByRole("button", { name: "Update note" }));
+      expect(await screen.findByRole("alert")).toHaveTextContent(
+        "Unable to load note",
+      );
+      await user.type(screen.getByLabelText("Title"), "Title");
+      await user.type(screen.getByTestId("content-input"), "Content");
+      updateNote.mockRejectedValueOnce(new Error("Save failed"));
+      await user.click(screen.getByRole("button", { name: "Update note" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Save failed");
-    consoleError.mockRestore();
+      expect(await screen.findByRole("alert")).toHaveTextContent("Save failed");
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 });

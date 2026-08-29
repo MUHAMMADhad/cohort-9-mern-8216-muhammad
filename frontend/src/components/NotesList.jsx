@@ -1,4 +1,4 @@
-import NoteCard from "./NoteCard";
+import NoteCard from "./NoteCard.jsx";
 
 const NotesList = ({ notes, onEdit, onDelete }) => {
   if (notes.length === 0) {

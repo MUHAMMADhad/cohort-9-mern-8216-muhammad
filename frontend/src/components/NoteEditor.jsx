@@ -9,11 +9,20 @@ import "../styles/NoteEditor.css";
 
 // Pulls plain text out of BlockNote's block tree, for the live word/char count.
 const blocksToPlainText = (blocks = []) => {
+  const extractText = (items) =>
+    items
+      .map((item) => {
+        if (item.type === "link" && Array.isArray(item.content)) {
+          return extractText(item.content);
+        }
+        return item.text || "";
+      })
+      .join("");
   const collect = (nodes) =>
     nodes
       .map((node) => {
         const inline = Array.isArray(node.content)
-          ? node.content.map((c) => c.text || "").join("")
+          ? extractText(node.content)
           : "";
         const children = node.children?.length ? collect(node.children) : "";
         return [inline, children].filter(Boolean).join(" ");

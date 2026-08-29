@@ -19,7 +19,10 @@ const renderInlineContent = (content = [], keyPrefix = "text") =>
           target="_blank"
           rel="noreferrer"
         >
-          {item.content}
+          {renderInlineContent(
+            item.content || [],
+            `${keyPrefix}-link-${index}`,
+          )}
         </a>
       );
     }
@@ -133,7 +136,9 @@ const NoteCard = ({ note, onEdit, onDelete }) => {
             {renderBlocks(blocks)}
           </div>
         ) : (
-          <p>{preview}</p>
+          <p className="note-card-preview" data-testid="note-preview">
+            {preview}
+          </p>
         )}
 
         <small>
